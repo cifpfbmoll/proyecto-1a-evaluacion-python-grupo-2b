@@ -43,9 +43,11 @@ def randomCardDistribution():
         playersCards = []
         for createList in playerAmountList:
             playersCards.append([])
-        for cardsToDistribute in range(1,7):
-            for cardsToPlayer in playerAmountList:
+        for cardsToDistribute in range(7):
+            for cardsToPlayer in range(len(playerAmountList)):
                 rnd = round(random.uniform(0, len(cardList)))
                 currentCard = cardList.pop(-rnd)
+                playersCards[cardsToPlayer].append(currentCard)
+                print(playersCards)
 
 randomCardDistribution()
