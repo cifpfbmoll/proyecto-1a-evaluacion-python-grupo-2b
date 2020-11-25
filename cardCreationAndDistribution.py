@@ -49,5 +49,3 @@ def randomCardDistribution():
                 currentCard = cardList.pop(-rnd)
                 playersCards[cardsToPlayer].append(currentCard)
                 print(playersCards)
-
-randomCardDistribution()
