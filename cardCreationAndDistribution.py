@@ -33,7 +33,7 @@ def playerSetup():
     return playerAmount
 
 def randomCardDistribution():
-    playerAmountList = list(range(1, playerSetup() + 1))
+    playerAmountList = list(range(1, playerSetup() + 1)) #Guarda les posicions dels jugadors.
     if len(playerAmountList) < 2 or len(playerAmountList) > 10:
         print("Error! Número de jugadores inválido! Deben ser más de 2 y como mucho, 10.")
     else:
@@ -41,13 +41,25 @@ def randomCardDistribution():
         cardList = initiateCards()
         print(cardList)
         playersCards = []
-        for createList in playerAmountList:
+        for createList in playerAmountList: #Creació llista per cartes de jugadors.
             playersCards.append([])
-        for cardsToDistribute in range(7):
+
+        for cardsToDistribute in range(7): #Distribució de cartes.
             for cardsToPlayer in range(len(playerAmountList)):
                 rnd = round(random.uniform(0, len(cardList)))
                 currentCard = cardList.pop(-rnd)
                 playersCards[cardsToPlayer].append(currentCard)
-                print(playersCards)
+    rnd = round(random.uniform(0, len(cardList)))
+    initialCard = cardList.pop(0)
+    print(initialCard)
+
+
+    while initialCard.__getitem__(0) == "special" and initialCard.__getitem__(1) == "wild draw 4":
+        cardList.append(initialCard)
+        rnd = round(random.uniform(0, len(cardList)))
+        initialCard = cardList.pop(-rnd)
+        print(initialCard)
+
+    return playersCards, initialCard, cardList
 
 randomCardDistribution()
