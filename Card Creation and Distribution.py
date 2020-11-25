@@ -18,15 +18,12 @@ def initiateCards():
         for specialCard in specialCards:
             initCards = Card("special", specialCard)
             cardList.append([initCards.c, initCards.n])
-            cardAmount = cardAmount + 1
         initCards = Card(color, 0)
         cardList.append([initCards.c, initCards.n])
-        cardAmount = cardAmount + 1
         for card in doubleCards:
             for z in range(0, 2):
                 initCards = Card(color, card)
                 cardList.append([initCards.c, initCards.n])
-                cardAmount = cardAmount + 1
     return cardList
 
 def playerSetup():
@@ -36,5 +33,19 @@ def playerSetup():
     return playerAmount
 
 def randomCardDistribution():
-    for roundsPerPlayer in range(len(playerSetup())):
-        rnd = round(random.uniform(0, len(initiateCards())))
+    playerAmountList = list(range(1, playerSetup() + 1))
+    if len(playerAmountList) < 2 or len(playerAmountList) > 10:
+        print("Error! Número de jugadores inválido! Deben ser más de 2 y como mucho, 10.")
+    else:
+        print(playerAmountList)
+        cardList = initiateCards()
+        print(cardList)
+        playersCards = []
+        for createList in playerAmountList:
+            playersCards.append([])
+        for cardsToDistribute in range(1,7):
+            for cardsToPlayer in playerAmountList:
+                rnd = round(random.uniform(0, len(cardList)))
+                currentCard = cardList.pop(-rnd)
+
+randomCardDistribution()
