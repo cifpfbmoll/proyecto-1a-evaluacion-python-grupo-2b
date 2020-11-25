@@ -1,3 +1,3 @@
-import "Card Creation and Distribution" 
+import
 
 initiateCards()
