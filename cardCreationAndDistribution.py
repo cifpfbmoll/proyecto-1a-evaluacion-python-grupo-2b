@@ -12,7 +12,6 @@ def initiateCards():
     colors = ["red", "green", "blue", "yellow"]
     specialCards = ["wild", "wild draw 4"]
     cardList = []
-    cardAmount = 0
 
     for color in colors:
         for specialCard in specialCards:
@@ -32,14 +31,16 @@ def playerSetup():
 
     return playerAmount
 
-def randomCardDistribution():
-    playerAmountList = list(range(1, playerSetup() + 1)) #Guarda les posicions dels jugadors.
+players = playerSetup()
+
+def randomCardDistribution(playerAmount):
+    playerAmountList = list(range(1, playerAmount + 1)) #Guarda les posicions dels jugadors.
+
     if len(playerAmountList) < 2 or len(playerAmountList) > 10:
         print("Error! Número de jugadores inválido! Deben ser más de 2 y como mucho, 10.")
+
     else:
-        print(playerAmountList)
         cardList = initiateCards()
-        print(cardList)
         playersCards = []
         for createList in playerAmountList: #Creació llista per cartes de jugadors.
             playersCards.append([])
@@ -49,17 +50,38 @@ def randomCardDistribution():
                 rnd = round(random.uniform(0, len(cardList)))
                 currentCard = cardList.pop(-rnd)
                 playersCards[cardsToPlayer].append(currentCard)
+
     rnd = round(random.uniform(0, len(cardList)))
-    initialCard = cardList.pop(1)
-    print(initialCard)
+    initialCard = cardList.pop(rnd)
 
 
     while initialCard.__getitem__(0) == "special" and initialCard.__getitem__(1) == "wild draw 4":
         cardList.append(initialCard)
         rnd = round(random.uniform(0, len(cardList)))
-        initialCard = cardList.pop(-rnd)
-        print(initialCard)
+        initialCard = cardList.pop(rnd)
 
-    return playersCards, initialCard, cardList
+    usedCards = [initialCard]
 
-randomCardDistribution()
+    return playerAmountList, playersCards, usedCards, cardList
+
+def gameStart(maxPlayer, playerList):
+    ongoingRound = True
+    while ongoingRound:
+        for cardAmount in playersCurrentCards: #Quantitat de cartes de cada jugador.
+            if len(cardAmount) == 0: #Si algú en té 0, final de partida.
+                ongoingRound = False
+
+        startingPlayer = round(random.uniform(1, maxPlayer)) #Quin jugador comença (número, no index a la llista)
+        currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
+        #playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
+
+        if currentPlayer < len(playerList):
+            currentPlayer = currentPlayer + 1
+
+        else:
+            currentPlayer = 0
+
+
+playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining = randomCardDistribution(players)
+
+gameStart(players, playerList)
