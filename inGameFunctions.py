@@ -15,14 +15,20 @@ def gameStart(maxPlayer, playerList):
         currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
         #playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
 
-        if currentPlayer < len(playerList):
-            currentPlayer = currentPlayer + 1
-
-        else:
-            currentPlayer = 0
+randomCardDistribution()
 
 def compararCarta():
     for carta in cardsRemaining:
         for i in range(len(cardsRemaining)):
             print(i, end="")
         print(carta, end="")
+    int(input("Elige un número de tu mano:"))
+
+def compararCarta():
+    while (selectedcard-color != descartes[-1]) and (selectedcard-num != descartes[-1])
+
+        print ("Elige otra carta, esta no se puede tirar")
+        #llamamos otra vez a la funcion de seleccionar carta
+
+    #if ha intentado tirar todas las cartas y no puede jugar a forzar a robar carta
+
