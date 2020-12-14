@@ -13,11 +13,11 @@ def gameStart(maxPlayer, playerList):
 
         startingPlayer = round(random.uniform(1, maxPlayer)) #Quin jugador comença (número, no index a la llista)
         currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
-        #playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
+        playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
 
 def mostrarMano():
     i=1
-    for carta in playersCurrentCards[0]:
+    for carta in playersCurrentCards[currentPlayer]:
         print("%d)"%(i), end="")
         for atr in carta:
             print(atr, end=" ")
@@ -25,12 +25,20 @@ def mostrarMano():
         i+=1
     indice = input("Elige un número de tu mano:")
 
-    cartaElegida = playersCurrentCards[0][int(indice)-1]
+    cartaElegida = playersCurrentCards[currentPlayer][int(indice)-1]
     return cartaElegida
 
-def compararCarta(cartaElegida):
-    if (cartaElegida[0]==) or (cartaElegida[1])
+cartaElegida = mostrarMano()
 
+def compararCarta():
+    if (alreadyUsedCards[-1][0] == "special"):
+        if (cartaElegida[0]==SelectedColor):
+    if (cartaElegida[0]==) or (cartaElegida[1]):
+
+def playerTurn(player):
+
+
+#pruebas
 si = mostrarMano()
 print(si)
 compararCarta(si)
