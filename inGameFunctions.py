@@ -35,22 +35,33 @@ def mostrarMano(currentPlayer):
 cartaElegida = mostrarMano()
 
 def compararCarta():
+    #comparador en cas de que canviin es color amb una wild
     if (alreadyUsedCards[-1][0] == "special"):
-        if (cartaElegida[0]==SelectedColor):
-    if (cartaElegida[0]==) or (cartaElegida[1]):
+        if (cartaElegida[0] == colorglobal):
+            #tirarcarta
+            print("carta especial")
+    #comparador en cas de que sigui carta normal
+    elif (cartaElegida[0]==) or (cartaElegida[1]):
+        #tirarcarta
+        print("carta normal")
 
-def playerTurn(player):
+def tirarCarta():
+    
+
+#def playerTurn(player):
 
 
 #pruebas
-si = mostrarMano()
-print(si)
-compararCarta(si)
+#si = mostrarMano()
+#print(si)
+#compararCarta(si)
 
 def cardIsWild():
     print("Qué color quieres poner?")
     selectedColor = input()
     return selectedColor
+
+colorglobal = cardIsWild()
 
 def drawCards(cartaElegida):
     if cartaElegida[1] == "draw 2":
