@@ -8,7 +8,7 @@ class Card:
 
 def initiateCards():
 
-    doubleCards = [1, 2, 3, 4, 5, 6, 7, 8, 9, "reverse", "draw two", "skip"]
+    doubleCards = [1, 2, 3, 4, 5, 6, 7, 8, 9, "reverse", "draw 2", "skip"]
     colors = ["red", "green", "blue", "yellow"]
     specialCards = ["wild", "wild draw 4"]
     cardList = []

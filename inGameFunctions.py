@@ -12,13 +12,17 @@ def gameStart(maxPlayer, playerList):
                 ongoingRound = False
 
         startingPlayer = round(random.uniform(1, maxPlayer)) #Quin jugador comença (número, no index a la llista)
-        currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
+        currentPlayer = playerList.index(startingPlayer)-1 #Índex del jugador que comença
         playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
+        print(currentPlayer)
+    return currentPlayer
 
-def mostrarMano():
+currentPlayer = gameStart(len(playerList),playerList)
+
+def mostrarMano(currentPlayer):
     i=1
     for carta in playersCurrentCards[currentPlayer]:
-        print("%d)"%(i), end="")
+        print("%d)" %(i), end="")
         for atr in carta:
             print(atr, end=" ")
         print()
@@ -42,6 +46,25 @@ def playerTurn(player):
 si = mostrarMano()
 print(si)
 compararCarta(si)
+
+def cardIsWild():
+    print("Qué color quieres poner?")
+    selectedColor = input()
+    return selectedColor
+
+def drawCards(cartaElegida):
+    if cartaElegida[1] == "draw 2":
+        for times in range(0,2):
+            rnd = round(random.uniform(0,len(cardsRemaining)-1))
+            cardsRemaining.pop(rnd)
+
+
+    if cartaElegida[1] == "wild draw 4":
+        for times in range(0,4):
+            rnd = round(random.uniform(0,len(cardsRemaining)-1))
+            cardsRemaining.pop(rnd)
+
+
 
 #def compararCarta():
     #while (selectedcard-color != descartes[-1]) and (selectedcard-num != descartes[-1])
