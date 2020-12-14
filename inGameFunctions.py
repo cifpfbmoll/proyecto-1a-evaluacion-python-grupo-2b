@@ -2,7 +2,7 @@ from cardCreationAndDistribution import randomCardDistribution, initiateCards, p
 import random
 
 playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining = randomCardDistribution(players)
-#Llista amb jugadors, llista amb cartes actuals, llista descartes, llista
+#Llista amb jugadors, llista amb cartes actuals, llista descartes, llista per agafar
 
 def gameStart(maxPlayer, playerList):
     ongoingRound = True
@@ -15,20 +15,30 @@ def gameStart(maxPlayer, playerList):
         currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
         #playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
 
-randomCardDistribution()
+def mostrarMano():
+    i=1
+    for carta in playersCurrentCards[0]:
+        print("%d)"%(i), end="")
+        for atr in carta:
+            print(atr, end=" ")
+        print()
+        i+=1
+    indice = input("Elige un número de tu mano:")
 
-def compararCarta():
-    for carta in cardsRemaining:
-        for i in range(len(cardsRemaining)):
-            print(i, end="")
-        print(carta, end="")
-    int(input("Elige un número de tu mano:"))
+    cartaElegida = playersCurrentCards[0][int(indice)-1]
+    return cartaElegida
 
-def compararCarta():
-    while (selectedcard-color != descartes[-1]) and (selectedcard-num != descartes[-1])
+def compararCarta(cartaElegida):
+    if (cartaElegida[0]==) or (cartaElegida[1])
 
-        print ("Elige otra carta, esta no se puede tirar")
+si = mostrarMano()
+print(si)
+compararCarta(si)
+
+#def compararCarta():
+    #while (selectedcard-color != descartes[-1]) and (selectedcard-num != descartes[-1])
+
+        #print ("Elige otra carta, esta no se puede tirar")
         #llamamos otra vez a la funcion de seleccionar carta
 
     #if ha intentado tirar todas las cartas y no puede jugar a forzar a robar carta
-
