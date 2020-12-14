@@ -1,4 +1,4 @@
-from cardCreationAndDistribution import randomCardDistribution, initiateCards, players
+from cardCreationAndDistribution import randomCardDistribution, players
 import random
 
 playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining = randomCardDistribution(players)
@@ -11,10 +11,11 @@ def gameStart(maxPlayer, playerList):
             if len(cardAmount) == 0: #Si algú en té 0, final de partida.
                 ongoingRound = False
 
-        startingPlayer = round(random.uniform(1, maxPlayer)) #Quin jugador comença (número, no index a la llista)
-        currentPlayer = playerList.index(startingPlayer)-1 #Índex del jugador que comença
-        playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
-        print(currentPlayer)
+    startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
+    currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
+    playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
+    print(currentPlayer)
+
     return currentPlayer
 
 currentPlayer = gameStart(len(playerList),playerList)
@@ -32,7 +33,7 @@ def mostrarMano(currentPlayer):
     cartaElegida = playersCurrentCards[currentPlayer][int(indice)-1]
     return cartaElegida
 
-cartaElegida = mostrarMano()
+cartaElegida = mostrarMano(currentPlayer)
 
 def compararCarta():
     #comparador en cas de que canviin es color amb una wild
@@ -45,42 +46,56 @@ def compararCarta():
         #tirarcarta
         print("carta normal")
 
-def tirarCarta():
-    
-
-#def playerTurn(player):
-
+def playerTurn(currentPlayer):
 
 #pruebas
-#si = mostrarMano()
-#print(si)
-#compararCarta(si)
+si = mostrarMano()
+print(si)
+compararCarta(si)
 
 def cardIsWild():
-    print("Qué color quieres poner?")
-    selectedColor = input()
+    print("Qué color quieres poner? \n 1) Red \n 2) Blue \n 3) Green \n 4) Yellow")
+    choice = int(input())
+    if choice == 1:
+        selectedColor = "red"
+
+    elif choice == 2:
+        selectedColor = "blue"
+
+    elif choice == 3:
+        selectedColor = "green"
+
+    elif choice == 4:
+        selectedColor = "yellow"
+
     return selectedColor
 
-colorglobal = cardIsWild()
+def skipCard():
+    nextPlayerSelect(nextPlayerSelect(currentPlayer))
 
-def drawCards(cartaElegida):
+def nextPlayerSelect(currentPlayer):
+    if currentPlayer == playerList[-1]:
+        nextPlayer = playerList[0]
+
+    else:
+        nextPlayer = currentPlayer + 1
+
+    return nextPlayer
+
+def reversalCard(playerList):
+    playerList = list(reversed(playerList))
+    return playerList
+
+def drawCardsAmount(cartaElegida):
     if cartaElegida[1] == "draw 2":
         for times in range(0,2):
-            rnd = round(random.uniform(0,len(cardsRemaining)-1))
-            cardsRemaining.pop(rnd)
-
+            drawCards()
 
     if cartaElegida[1] == "wild draw 4":
         for times in range(0,4):
-            rnd = round(random.uniform(0,len(cardsRemaining)-1))
-            cardsRemaining.pop(rnd)
+            drawCards()
 
-
-
-#def compararCarta():
-    #while (selectedcard-color != descartes[-1]) and (selectedcard-num != descartes[-1])
-
-        #print ("Elige otra carta, esta no se puede tirar")
-        #llamamos otra vez a la funcion de seleccionar carta
-
-    #if ha intentado tirar todas las cartas y no puede jugar a forzar a robar carta
+def drawCards(nextPlayer):
+    rnd = round(random.uniform(-0.49, len(cardsRemaining) - 0.5))
+    cardToAdd = cardsRemaining.pop(rnd)
+    cardToAdd.append(playersCurrentCards[nextPlayer])

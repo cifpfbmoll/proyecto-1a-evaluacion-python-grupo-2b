@@ -47,16 +47,16 @@ def randomCardDistribution(playerAmount):
 
         for cardsToDistribute in range(7): #Distribució de cartes.
             for cardsToPlayer in range(len(playerAmountList)):
-                rnd = round(random.uniform(0, len(cardList)-1))
+                rnd = round(random.uniform(-0.49, len(cardList)-0.5))
                 currentCard = cardList.pop(rnd)
                 playersCards[cardsToPlayer].append(currentCard)
 
-    rnd = round(random.uniform(0, len(cardList)-1))
+    rnd = round(random.uniform(-0.49, len(cardList)-0.5))
     initialCard = cardList.pop(rnd)
 
     while initialCard[0] == "special" and initialCard[1] == "wild draw 4":
         cardList.append(initialCard)
-        rnd = round(random.uniform(0, len(cardList)-1))
+        rnd = round(random.uniform(-0.49, len(cardList)-0.5))
         initialCard = cardList.pop(rnd)
 
     usedCards = [initialCard]
