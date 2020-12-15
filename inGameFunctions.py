@@ -6,10 +6,10 @@ playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining = randomCardDi
 
 def gameStart(maxPlayer, playerList):
     ongoingRound = True
-    while ongoingRound:
-        for cardAmount in playersCurrentCards: #Quantitat de cartes de cada jugador.
-            if len(cardAmount) == 0: #Si algú en té 0, final de partida.
-                ongoingRound = False
+    #while ongoingRound:
+        #for cardAmount in playersCurrentCards: #Quantitat de cartes de cada jugador.
+            #if len(cardAmount) == 0: #Si algú en té 0, final de partida.
+                #ongoingRound = False
 
     startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
     currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
@@ -19,6 +19,15 @@ def gameStart(maxPlayer, playerList):
     return currentPlayer
 
 currentPlayer = gameStart(len(playerList),playerList)
+
+def playerTurn(currentPlayer):
+    #pruebas
+    si = mostrarMano(currentPlayer)
+    print(si)
+    #compararCarta()
+    tirarcarta()
+    print (alreadyUsedCards)
+    print (alreadyUsedCards)
 
 def mostrarMano(currentPlayer):
     i=1
@@ -42,16 +51,13 @@ def compararCarta():
             #tirarcarta
             print("carta especial")
     #comparador en cas de que sigui carta normal
-    elif (cartaElegida[0]==) or (cartaElegida[1]):
+    elif ((cartaElegida[0]=="a") or (cartaElegida[1]=="b")):
         #tirarcarta
         print("carta normal")
 
-def playerTurn(currentPlayer):
-
-#pruebas
-si = mostrarMano()
-print(si)
-compararCarta(si)
+def tirarcarta():
+    tirada = playersCurrentCards[currentPlayer[cartaTirada]].pop 
+    alreadyUsedCards.insert(-1, tirada)
 
 def cardIsWild():
     print("Qué color quieres poner? \n 1) Red \n 2) Blue \n 3) Green \n 4) Yellow")
