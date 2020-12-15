@@ -42,8 +42,10 @@ def randomCardDistribution(playerAmount):
     else:
         cardList = initiateCards()
         playersCards = []
+        playersPunctuation = []
         for createList in playerAmountList: #Creació llista per cartes de jugadors.
             playersCards.append([])
+            playersPunctuation.append([])
 
         for cardsToDistribute in range(7): #Distribució de cartes.
             for cardsToPlayer in range(len(playerAmountList)):
@@ -61,4 +63,4 @@ def randomCardDistribution(playerAmount):
 
     usedCards = [initialCard]
 
-    return playerAmountList, playersCards, usedCards, cardList
+    return playerAmountList, playersCards, usedCards, cardList, playersPunctuation

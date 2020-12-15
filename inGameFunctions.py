@@ -1,22 +1,17 @@
 from cardCreationAndDistribution import randomCardDistribution, players
 import random
 
-playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining = randomCardDistribution(players)
-#Llista amb jugadors, llista amb cartes actuals, llista descartes, llista per agafar
+playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining, playersPunctuation = randomCardDistribution(players)
+#Llista amb jugadors, llista amb cartes actuals, llista descartes, llista per agafar, llista de puntuacions
+
+listReversed = False
 
 def gameStart(maxPlayer, playerList):
-    ongoingRound = True
-    #while ongoingRound:
-        #for cardAmount in playersCurrentCards: #Quantitat de cartes de cada jugador.
-            #if len(cardAmount) == 0: #Si algú en té 0, final de partida.
-                #ongoingRound = False
-
     startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
     currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
     playerTurn(currentPlayer) #Funció de què passa durant el turn del jugador.
-    print(currentPlayer)
 
-    return currentPlayer
+    return currentPlayer, startingPlayer
 
 currentPlayer = gameStart(len(playerList),playerList)
 
@@ -56,7 +51,7 @@ def compararCarta():
         print("carta normal")
 
 def tirarcarta():
-    tirada = playersCurrentCards[currentPlayer[cartaTirada]].pop 
+    tirada = playersCurrentCards[currentPlayer[cartaTirada]].pop
     alreadyUsedCards.insert(-1, tirada)
 
 def cardIsWild():
@@ -88,9 +83,14 @@ def nextPlayerSelect(currentPlayer):
 
     return nextPlayer
 
-def reversalCard(playerList):
+def reversalCard(playerList, listReversed):
     playerList = list(reversed(playerList))
-    return playerList
+    if listReversed:
+        listReversed = False
+    else:
+        listReversed = True
+
+    return playerList, listReversed
 
 def drawCardsAmount(cartaElegida):
     if cartaElegida[1] == "draw 2":
@@ -105,3 +105,34 @@ def drawCards(nextPlayer):
     rnd = round(random.uniform(-0.49, len(cardsRemaining) - 0.5))
     cardToAdd = cardsRemaining.pop(rnd)
     cardToAdd.append(playersCurrentCards[nextPlayer])
+
+def finishRound():
+    roundValue = 0
+    for player in playersCurrentCards:
+        cardsToSum = True
+        while cardsToSum:
+            cardRemoved = playersCurrentCards[player].pop(0)
+
+            if cardRemoved[0] != "special" and cardRemoved[1] != "skip" and cardRemoved[1] != "reverse" \
+            and cardRemoved[1] != "draw 2":
+                roundValue = roundValue + cardRemoved[1]
+
+            elif cardRemoved[0] == "special":
+                roundValue = roundValue + 50
+
+            elif cardRemoved[1] == "skip" or cardRemoved[1] == "reversed" or cardRemoved[1] == "draw 2":
+                roundValue = roundValue + 20
+
+            if len(playersCurrentCards[player]) == 0:
+                cardsToSum = False
+
+        playersPunctuation[currentPlayer].append(roundValue)
+
+def startRound(startingPlayer):
+    if listReversed:
+        reversalCard()
+
+    startingPlayer = nextPlayerSelect(startingPlayer)
+    currentPlayer = playerList.index(startingPlayer)
+
+    return currentPlayer, startingPlayer
