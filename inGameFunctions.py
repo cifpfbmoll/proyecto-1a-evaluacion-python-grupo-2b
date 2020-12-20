@@ -6,9 +6,12 @@ playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining, playersPunctu
 
 listReversed = False
 
+#Sabem que la forma més optima es no emprar globals però no varem aconseguir fer-ho d'una altra forma
+#variables globales: inRound, startingPlayer, currentPlayer, cartaIndex, cartaElegida, robado, listReversed, selectedColor
+#+ les de adalat
+
 def mostrarMano():
-    global cartaElegida
-    global cartaIndex
+    global cartaIndex, cartaElegida, robado
     i=1
     for carta in playersCurrentCards[currentPlayer]:
         print("%d)" %(i), end="")
@@ -25,35 +28,42 @@ def mostrarMano():
         drawCards()
         cartaElegida = playersCurrentCards[currentPlayer][-1]
         cartaIndex = len(playersCurrentCards[currentPlayer])-1
-        compararCarta()
-        robado = TRUE
-        return robado
+        robado = True
     else:
         cartaIndex = int(indice)-1
         cartaElegida = playersCurrentCards[currentPlayer][cartaIndex]
 
 def compararCarta():
+    #comprovar si la carta que ha robat es pot tirar
+    if (robado) and ((cartaElegida[0] != alreadyUsedCards[-1][0]) and (cartaElegida[1] != alreadyUsedCards[-1][1])):
+        print("Como no se puede tirar, se pasa al siguiente turno")
+        nextPlayerSelect()
+    #si sa carta que tira es especial, tirar-la fora comparar
+    elif(cartaElegida[0] == "special"):
+        tirarCarta()
     #comparador en cas de que canviin es color amb una wild
-    if (alreadyUsedCards[-1][0] == "special") and (cartaElegida[0] == selectedColor):
-            tirarcarta()
+    elif (alreadyUsedCards[-1][0] == "special") and (cartaElegida[0] == selectedColor):
+            tirarCarta()
     #comparador en cas de que sigui carta normal
     elif ((cartaElegida[0] == alreadyUsedCards[-1][0]) or (cartaElegida[1] == alreadyUsedCards[-1][1])):
-        tirarcarta()
+        tirarCarta()
     else: 
         print("No has elegido una carta correcta")
         mostrarMano()
 
-def tirarcarta():
+def cartaEspecial():
+    #comparar si la carta no es un número y ejecutar según el tipo que sea
+
+def tirarCarta():
     tirada = playersCurrentCards[currentPlayer].pop(cartaIndex)
     alreadyUsedCards.append(tirada)
-    print (alreadyUsedCards)
-    print (playersCurrentCards[currentPlayer])
 
 def retornarDescartes():
     cardsRemaining = alreadyUsedCards[:]
     del alreadyUsedCards[0,len(alreadyUsedCards)-1]
 
 def cardIsWild():
+    global selectedColor
     print("Qué color quieres poner? \n 1) Red \n 2) Blue \n 3) Green \n 4) Yellow")
     choice = int(input())
     if choice == 1:
@@ -68,28 +78,25 @@ def cardIsWild():
     elif choice == 4:
         selectedColor = "yellow"
 
-    return selectedColor
-
 def skipCard():
     nextPlayerSelect()
 
 def nextPlayerSelect():
+    global currentPlayer
     if currentPlayer == playerList[-1]:
-        nextPlayer = 0
+        currentPlayer = 0
 
     else:
-        nextPlayer = currentPlayer + 1
+        currentPlayer = currentPlayer + 1
 
-    return nextPlayer
 
-def reversalCard(playerList, listReversed):
+def reversalCard():
+    global playerList, listReversed
     playerList = list(reversed(playerList))
     if listReversed:
         listReversed = False
     else:
         listReversed = True
-
-    return playerList, listReversed
 
 def drawCardsAmount():
     if cartaElegida[1] == "draw 2":
@@ -127,20 +134,20 @@ def finishRound():
 
         playersPunctuation[currentPlayer].append(roundValue)
 
-def startRound(startingPlayer):
-    global inRound
+def startRound():
+    global inRound, startingPlayer, currentPlayer, robado
     inRound = True
+    robado = False
     if listReversed:
         reversalCard()
 
-    startingPlayer = nextPlayerSelect(startingPlayer)
-    currentPlayer = playerList.index(startingPlayer)
-
-    return currentPlayer, startingPlayer
-
-def playerTurn(currentPlayer):
+def playerTurn():
+    global currentPlayer, inRound, robado
+    robado = False
+    startRound()
     print(alreadyUsedCards)
     mostrarMano()
+    print("Has elegido: ", end="")
     print(cartaElegida)
     compararCarta()
     if (len(playersCurrentCards[currentPlayer]) == 0):
@@ -152,16 +159,18 @@ def playerTurn(currentPlayer):
     if (len(playersCurrentCards[currentPlayer]) == 1):
         print("UNO")
     currentPlayer = nextPlayerSelect()
-    currentPlayer = 2
 
 def gameStart(maxPlayer, playerList):
-    global currentPlayer, startingPlayer
-    global inRound 
+    global inRound, startingPlayer, currentPlayer
     inRound = True
     startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
     currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
 
-gameStart(len(playerList)-1,playerList)
+def jugar():
+    gameStart(len(playerList)-1,playerList)
+    while (inRound):
+        playerTurn()#Funció de què passa durant el turn del jugador.
+    print ("Has ganado la ronda")
+    finishRound()
 
-while (inRound):
-    playerTurn(currentPlayer)#Funció de què passa durant el turn del jugador.
+jugar()
