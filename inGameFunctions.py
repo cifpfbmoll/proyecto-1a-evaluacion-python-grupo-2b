@@ -1,14 +1,16 @@
 from cardCreationAndDistribution import randomCardDistribution, players
-import random
+import random, os
 
 playerList, playersCurrentCards, alreadyUsedCards, cardsRemaining, playersPunctuation = randomCardDistribution(players)
 #Llista amb jugadors, llista amb cartes actuals, llista descartes, llista per agafar, llista de puntuacions
 
 listReversed = False
 
-#Sabem que la forma més optima es no emprar globals però no varem aconseguir fer-ho d'una altra forma
-#variables globales: inRound, startingPlayer, currentPlayer, cartaIndex, cartaElegida, robado, listReversed, selectedColor
-#+ les de adalt
+def limpiarTerminal():
+    if os.name=="posix":
+        os.system('clear')
+    else:
+        os.system('cls')
 
 def mostrarMano(currentPlayer):
     global cartaIndex, cartaElegida, robado
@@ -28,23 +30,29 @@ def mostrarMano(currentPlayer):
 
     indice = input("Elige un número de tu mano:")
 
-    if (int(indice) == i):
-        drawCards(currentPlayer)
-        cartaElegida = playersCurrentCards[currentPlayer][-1]
-        cartaIndex = len(playersCurrentCards[currentPlayer])-1
-        robado = True
+    if (1 >= int(indice) <= len(playersCurrentCards[currentPlayer])+1):
+        if (int(indice) == i):
+            drawCards(currentPlayer)
+            cartaElegida = playersCurrentCards[currentPlayer][-1]
+            cartaIndex = len(playersCurrentCards[currentPlayer])-1
+            robado = True
+        else:
+            cartaIndex = int(indice)-1
+            cartaElegida = playersCurrentCards[currentPlayer][cartaIndex]
     else:
-        cartaIndex = int(indice)-1
-        cartaElegida = playersCurrentCards[currentPlayer][cartaIndex]
+        print("No has puesto un número de una carta")
+        mostrarMano(currentPlayer)
+        print (len(playersCurrentCards[currentPlayer])+1)
 
 def compararCarta(currentPlayer):
     #comprovar si la carta que ha robat es pot tirar
     if (robado) and ((cartaElegida[0] != alreadyUsedCards[-1][0]) and (cartaElegida[1] != alreadyUsedCards[-1][1])):
         print("Como no se puede tirar, se pasa al siguiente turno")
         nextPlayerSelect(currentPlayer)
-    #si sa carta que tira es especial, tirar-la fora comparar
+    #si sa carta que tira es especial, tirar-la fora comparar i elegir color
     elif(cartaElegida[0] == "special"):
         tirarCarta(currentPlayer)
+        cardIsWild()
     #comparador en cas de que canviin es color amb una wild
     elif (alreadyUsedCards[-1][0] == "special") and (cartaElegida[0] == selectedColor):
             tirarCarta(currentPlayer)
@@ -52,23 +60,33 @@ def compararCarta(currentPlayer):
     elif ((cartaElegida[0] == alreadyUsedCards[-1][0]) or (cartaElegida[1] == alreadyUsedCards[-1][1])):
         tirarCarta(currentPlayer)
     else:
-        print("No has elegido una carta correcta")
+        limpiarTerminal()
+        print("No has elegido una carta correcta, vuelve a probar")
+        print("Última carta tirada:",alreadyUsedCards[-1])
         mostrarMano(currentPlayer)
 
-#def cartaEspecial():
-    #comparar si la carta no es un número y ejecutar según el tipo que sea
-    #if (type()):
-
 def tirarCarta(currentPlayer):
+    esAccion(currentPlayer)
     tirada = playersCurrentCards[currentPlayer].pop(cartaIndex)
     alreadyUsedCards.append(tirada)
+
+def esAccion(currentPlayer):
+    if (type(cartaElegida[1]) is str):
+        if (cartaElegida[1] == "reverse"):
+            reversalCard()
+        elif (cartaElegida[1] == "draw 2") or (cartaElegida[1] == "draw 4"):
+            currentPlayer = nextPlayerSelect(currentPlayer)
+            drawCardsAmount(currentPlayer)
+        else:
+            skipCard(currentPlayer)
+
+    return currentPlayer
 
 def retornarDescartes():
     cardsRemaining = alreadyUsedCards[:]
     del alreadyUsedCards[0,len(alreadyUsedCards)-1]
 
 def cardIsWild():
-    global selectedColor
     print("Qué color quieres poner? \n 1) Red \n 2) Blue \n 3) Green \n 4) Yellow")
     choice = int(input())
     if choice == 1:
@@ -83,8 +101,10 @@ def cardIsWild():
     elif choice == 4:
         selectedColor = "yellow"
 
-def skipCard():
-    nextPlayerSelect()
+    return selectedColor
+
+def skipCard(currentPlayer):
+    nextPlayerSelect(currentPlayer)
 
 def nextPlayerSelect(currentPlayer):
     if playerList[currentPlayer] == playerList[-1]:
@@ -103,7 +123,7 @@ def reversalCard():
     else:
         listReversed = True
 
-def drawCardsAmount():
+def drawCardsAmount(currentPlayer):
     if cartaElegida[1] == "draw 2":
         for times in range(0,2):
             drawCards()
@@ -151,7 +171,13 @@ def playerTurn(currentPlayer):
     global inRound, robado
     robado = False
     startRound()
-    print(alreadyUsedCards)
+    limpiarTerminal()
+    print("Turno del jugador:",currentPlayer)
+    input("Apreta Intro para iniciar el turno")
+    print("Última carta tirada:",alreadyUsedCards[-1])
+    if (alreadyUsedCards[0][0] == "special"):
+        selectedColor = cardIsWild()
+        print(selectedColor)
     mostrarMano(currentPlayer)
     print("Has elegido: ", end="")
     print(cartaElegida)
