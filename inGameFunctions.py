@@ -51,8 +51,9 @@ def compararCarta():
         print("No has elegido una carta correcta")
         mostrarMano()
 
-def cartaEspecial():
+#def cartaEspecial():
     #comparar si la carta no es un número y ejecutar según el tipo que sea
+    #if (type()):
 
 def tirarCarta():
     tirada = playersCurrentCards[currentPlayer].pop(cartaIndex)
@@ -88,6 +89,8 @@ def nextPlayerSelect():
 
     else:
         currentPlayer = currentPlayer + 1
+    
+    return currentPlayer
 
 
 def reversalCard():
@@ -134,13 +137,6 @@ def finishRound():
 
         playersPunctuation[currentPlayer].append(roundValue)
 
-def startRound():
-    global inRound, startingPlayer, currentPlayer, robado
-    inRound = True
-    robado = False
-    if listReversed:
-        reversalCard()
-
 def playerTurn():
     global currentPlayer, inRound, robado
     robado = False
@@ -152,25 +148,29 @@ def playerTurn():
     compararCarta()
     if (len(playersCurrentCards[currentPlayer]) == 0):
         finishRound()
-        global inRound
         inRound = False
         if (playersPunctuation[currentPlayer] < 500):
-            startRound()
+            jugar()
     if (len(playersCurrentCards[currentPlayer]) == 1):
         print("UNO")
     currentPlayer = nextPlayerSelect()
 
-def gameStart(maxPlayer, playerList):
-    global inRound, startingPlayer, currentPlayer
-    inRound = True
-    startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
-    currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
-
-def jugar():
-    gameStart(len(playerList)-1,playerList)
+def startRound():
+    if listReversed:
+        reversalCard()
+    inRound, startingPlayer, currentPlayer= gameStart(len(playerList)-1,playerList)
+    robado = False
     while (inRound):
         playerTurn()#Funció de què passa durant el turn del jugador.
     print ("Has ganado la ronda")
     finishRound()
 
-jugar()
+def gameStart(maxPlayer, playerList):
+    startedGame = True
+    startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
+    currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
+
+    return startingPlayer, currentPlayer, startedGame
+
+
+startRound()
