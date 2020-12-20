@@ -36,8 +36,8 @@ players = playerSetup()
 def randomCardDistribution(playerAmount):
     playerAmountList = list(range(1, playerAmount + 1)) #Guarda les posicions dels jugadors.
 
-    if len(playerAmountList) < 2 or len(playerAmountList) > 10:
-        print("Error! Número de jugadores inválido! Deben ser más de 2 y como mucho, 10.")
+    if len(playerAmountList) < 1 or len(playerAmountList) > 10:
+        print("Error! Número de jugadores inválido! Deben ser más de 1 y como mucho, 10.")
 
     else:
         cardList = initiateCards()

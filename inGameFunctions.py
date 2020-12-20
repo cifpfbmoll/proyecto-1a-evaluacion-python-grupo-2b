@@ -8,9 +8,9 @@ listReversed = False
 
 #Sabem que la forma més optima es no emprar globals però no varem aconseguir fer-ho d'una altra forma
 #variables globales: inRound, startingPlayer, currentPlayer, cartaIndex, cartaElegida, robado, listReversed, selectedColor
-#+ les de adalat
+#+ les de adalt
 
-def mostrarMano():
+def mostrarMano(currentPlayer):
     global cartaIndex, cartaElegida, robado
     i=1
     for carta in playersCurrentCards[currentPlayer]:
@@ -19,13 +19,17 @@ def mostrarMano():
             print(atr, end=" ")
         print()
         i+=1
+
     print("%d)" %(i), end="")
     print("Robar Carta")
+
     if (len(alreadyUsedCards) == 1) and (alreadyUsedCards[0][0] == "special"):
         cardIsWild()
+
     indice = input("Elige un número de tu mano:")
+
     if (int(indice) == i):
-        drawCards()
+        drawCards(currentPlayer)
         cartaElegida = playersCurrentCards[currentPlayer][-1]
         cartaIndex = len(playersCurrentCards[currentPlayer])-1
         robado = True
@@ -33,29 +37,29 @@ def mostrarMano():
         cartaIndex = int(indice)-1
         cartaElegida = playersCurrentCards[currentPlayer][cartaIndex]
 
-def compararCarta():
+def compararCarta(currentPlayer):
     #comprovar si la carta que ha robat es pot tirar
     if (robado) and ((cartaElegida[0] != alreadyUsedCards[-1][0]) and (cartaElegida[1] != alreadyUsedCards[-1][1])):
         print("Como no se puede tirar, se pasa al siguiente turno")
-        nextPlayerSelect()
+        nextPlayerSelect(currentPlayer)
     #si sa carta que tira es especial, tirar-la fora comparar
     elif(cartaElegida[0] == "special"):
-        tirarCarta()
+        tirarCarta(currentPlayer)
     #comparador en cas de que canviin es color amb una wild
     elif (alreadyUsedCards[-1][0] == "special") and (cartaElegida[0] == selectedColor):
-            tirarCarta()
+            tirarCarta(currentPlayer)
     #comparador en cas de que sigui carta normal
     elif ((cartaElegida[0] == alreadyUsedCards[-1][0]) or (cartaElegida[1] == alreadyUsedCards[-1][1])):
-        tirarCarta()
-    else: 
+        tirarCarta(currentPlayer)
+    else:
         print("No has elegido una carta correcta")
-        mostrarMano()
+        mostrarMano(currentPlayer)
 
 #def cartaEspecial():
     #comparar si la carta no es un número y ejecutar según el tipo que sea
     #if (type()):
 
-def tirarCarta():
+def tirarCarta(currentPlayer):
     tirada = playersCurrentCards[currentPlayer].pop(cartaIndex)
     alreadyUsedCards.append(tirada)
 
@@ -82,16 +86,14 @@ def cardIsWild():
 def skipCard():
     nextPlayerSelect()
 
-def nextPlayerSelect():
-    global currentPlayer
-    if currentPlayer == playerList[-1]:
+def nextPlayerSelect(currentPlayer):
+    if playerList[currentPlayer] == playerList[-1]:
         currentPlayer = 0
 
     else:
         currentPlayer = currentPlayer + 1
-    
-    return currentPlayer
 
+    return currentPlayer
 
 def reversalCard():
     global playerList, listReversed
@@ -110,17 +112,20 @@ def drawCardsAmount():
         for times in range(0,4):
             drawCards()
 
-def drawCards():
+def drawCards(currentPlayer):
     rnd = round(random.uniform(-0.49, len(cardsRemaining) - 0.5))
     cardToAdd = cardsRemaining.pop(rnd)
     playersCurrentCards[currentPlayer].append(cardToAdd)
 
-def finishRound():
+def finishRound(currentPlayer):
     roundValue = 0
-    for player in playersCurrentCards:
+    for playerCards in playersCurrentCards:
         cardsToSum = True
         while cardsToSum:
-            cardRemoved = playersCurrentCards[player].pop(0)
+            if len(playerCards) == 0:
+                cardsToSum = False
+
+            cardRemoved = playerCards.pop(0)
 
             if cardRemoved[0] != "special" and cardRemoved[1] != "skip" and cardRemoved[1] != "reverse" \
             and cardRemoved[1] != "draw 2":
@@ -132,45 +137,53 @@ def finishRound():
             elif cardRemoved[1] == "skip" or cardRemoved[1] == "reversed" or cardRemoved[1] == "draw 2":
                 roundValue = roundValue + 20
 
-            if len(playersCurrentCards[player]) == 0:
-                cardsToSum = False
 
         playersPunctuation[currentPlayer].append(roundValue)
 
-def playerTurn():
-    global currentPlayer, inRound, robado
+def startRound():
+    global inRound, startingPlayer, robado
+    inRound = True
+    robado = False
+    if listReversed:
+        reversalCard()
+
+def playerTurn(currentPlayer):
+    global inRound, robado
     robado = False
     startRound()
     print(alreadyUsedCards)
-    mostrarMano()
+    mostrarMano(currentPlayer)
     print("Has elegido: ", end="")
     print(cartaElegida)
-    compararCarta()
+    compararCarta(currentPlayer)
     if (len(playersCurrentCards[currentPlayer]) == 0):
         finishRound()
         inRound = False
-        if (playersPunctuation[currentPlayer] < 500):
-            jugar()
+        if (playersPunctuation[currentPlayer] <= 500):
+            startRound()
+        else:
+            print("Enhorabuena! El jugador", playerList[currentPlayer], "ha ganador la partida")
     if (len(playersCurrentCards[currentPlayer]) == 1):
         print("UNO")
-    currentPlayer = nextPlayerSelect()
 
-def startRound():
-    if listReversed:
-        reversalCard()
-    inRound, startingPlayer, currentPlayer= gameStart(len(playerList)-1,playerList)
-    robado = False
-    while (inRound):
-        playerTurn()#Funció de què passa durant el turn del jugador.
-    print ("Has ganado la ronda")
-    finishRound()
 
 def gameStart(maxPlayer, playerList):
-    startedGame = True
+    global inRound, startingPlayer
+    inRound = True
     startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
     currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
 
-    return startingPlayer, currentPlayer, startedGame
+    return currentPlayer
+
+def jugar():
+    currentPlayer = gameStart(len(playerList), playerList)
+    while (inRound):
+        playerTurn(currentPlayer)#Funció de què passa durant el turn del jugador.
+        currentPlayer = nextPlayerSelect(currentPlayer)
+    print("Has ganado la ronda")
+    finishRound()
+
+    return currentPlayer
 
 
-startRound()
+currentPlayer = jugar()
