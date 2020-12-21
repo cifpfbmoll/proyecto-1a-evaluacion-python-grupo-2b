@@ -54,7 +54,7 @@ def randomCardDistribution(playerAmount):
                 playersCards[cardsToPlayer].append(currentCard)
 
     rnd = round(random.uniform(-0.49, len(cardList)-0.5))
-    initialCard = cardList.pop(rnd)
+    initialCard = cardList.pop(0)
 
     while initialCard[0] == "special" and initialCard[1] == "wild draw 4":
         cardList.append(initialCard)

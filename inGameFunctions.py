@@ -25,12 +25,12 @@ def mostrarMano(currentPlayer):
     print("%d)" %(i), end="")
     print("Robar Carta")
 
-    if (len(alreadyUsedCards) == 1) and (alreadyUsedCards[0][0] == "special"):
+    if ((primeraJugada) and (alreadyUsedCards[-1][0] == "special")):
         cardIsWild()
 
     indice = input("Elige un número de tu mano:")
 
-    if (1 >= int(indice) <= len(playersCurrentCards[currentPlayer])+1):
+    if ((int(indice) >= 1) and (int(indice) <= i)):
         if (int(indice) == i):
             drawCards(currentPlayer)
             cartaElegida = playersCurrentCards[currentPlayer][-1]
@@ -47,12 +47,12 @@ def mostrarMano(currentPlayer):
 def compararCarta(currentPlayer):
     #comprovar si la carta que ha robat es pot tirar
     if (robado) and ((cartaElegida[0] != alreadyUsedCards[-1][0]) and (cartaElegida[1] != alreadyUsedCards[-1][1])):
-        print("Como no se puede tirar, se pasa al siguiente turno")
+        input("Como no se puede tirar, se pasa al siguiente turno")
         nextPlayerSelect(currentPlayer)
     #si sa carta que tira es especial, tirar-la fora comparar i elegir color
     elif(cartaElegida[0] == "special"):
-        tirarCarta(currentPlayer)
         cardIsWild()
+        tirarCarta(currentPlayer)
     #comparador en cas de que canviin es color amb una wild
     elif (alreadyUsedCards[-1][0] == "special") and (cartaElegida[0] == selectedColor):
             tirarCarta(currentPlayer)
@@ -64,11 +64,15 @@ def compararCarta(currentPlayer):
         print("No has elegido una carta correcta, vuelve a probar")
         print("Última carta tirada:",alreadyUsedCards[-1])
         mostrarMano(currentPlayer)
+    
+    return currentPlayer
 
 def tirarCarta(currentPlayer):
-    esAccion(currentPlayer)
+    currentPlayer = esAccion(currentPlayer)
     tirada = playersCurrentCards[currentPlayer].pop(cartaIndex)
     alreadyUsedCards.append(tirada)
+
+    return currentPlayer
 
 def esAccion(currentPlayer):
     if (type(cartaElegida[1]) is str):
@@ -78,8 +82,8 @@ def esAccion(currentPlayer):
             currentPlayer = nextPlayerSelect(currentPlayer)
             drawCardsAmount(currentPlayer)
         else:
-            skipCard(currentPlayer)
-
+            currentPlayer = skipCard(currentPlayer)
+    
     return currentPlayer
 
 def retornarDescartes():
@@ -87,32 +91,35 @@ def retornarDescartes():
     del alreadyUsedCards[0,len(alreadyUsedCards)-1]
 
 def cardIsWild():
+    global selectedColor
     print("Qué color quieres poner? \n 1) Red \n 2) Blue \n 3) Green \n 4) Yellow")
     choice = int(input())
-    if choice == 1:
-        selectedColor = "red"
+    if ((int(choice) >= 1) and (int(choice) <= 4)):
+        if choice == 1:
+            selectedColor = "red"
 
-    elif choice == 2:
-        selectedColor = "blue"
+        elif choice == 2:
+            selectedColor = "blue"
 
-    elif choice == 3:
-        selectedColor = "green"
+        elif choice == 3:
+            selectedColor = "green"
 
-    elif choice == 4:
-        selectedColor = "yellow"
-
-    return selectedColor
+        elif choice == 4:
+            selectedColor = "yellow"
+    else:
+        print("No has puesto un color disponible")
+        cardIsWild()
 
 def skipCard(currentPlayer):
-    nextPlayerSelect(currentPlayer)
+    currentPlayer = nextPlayerSelect(currentPlayer)
+
+    return currentPlayer
 
 def nextPlayerSelect(currentPlayer):
-    if playerList[currentPlayer] == playerList[-1]:
+    if currentPlayer+1 == len(playerList):
         currentPlayer = 0
-
     else:
-        currentPlayer = currentPlayer + 1
-
+        currentPlayer += 1
     return currentPlayer
 
 def reversalCard():
@@ -126,11 +133,11 @@ def reversalCard():
 def drawCardsAmount(currentPlayer):
     if cartaElegida[1] == "draw 2":
         for times in range(0,2):
-            drawCards()
+            drawCards(currentPlayer)
 
     if cartaElegida[1] == "wild draw 4":
         for times in range(0,4):
-            drawCards()
+            drawCards(currentPlayer)
 
 def drawCards(currentPlayer):
     rnd = round(random.uniform(-0.49, len(cardsRemaining) - 0.5))
@@ -164,24 +171,24 @@ def startRound():
     global inRound, startingPlayer, robado
     inRound = True
     robado = False
-    if listReversed:
-        reversalCard()
+    #if listReversed:
+        #reversalCard()
 
 def playerTurn(currentPlayer):
     global inRound, robado
     robado = False
+    
     startRound()
     limpiarTerminal()
-    print("Turno del jugador:",currentPlayer)
+    print("Turno del jugador:",playerList[currentPlayer])
     input("Apreta Intro para iniciar el turno")
     print("Última carta tirada:",alreadyUsedCards[-1])
-    if (alreadyUsedCards[0][0] == "special"):
-        selectedColor = cardIsWild()
-        print(selectedColor)
+    if ('selectedColor' in globals() and alreadyUsedCards[-1][0] == "special"):
+        print("Color elegido:",selectedColor)
     mostrarMano(currentPlayer)
     print("Has elegido: ", end="")
     print(cartaElegida)
-    compararCarta(currentPlayer)
+    currentPlayer = compararCarta(currentPlayer)
     if (len(playersCurrentCards[currentPlayer]) == 0):
         finishRound()
         inRound = False
@@ -194,7 +201,8 @@ def playerTurn(currentPlayer):
 
 
 def gameStart(maxPlayer, playerList):
-    global inRound, startingPlayer
+    global inRound, startingPlayer, primeraJugada
+    primeraJugada = True
     inRound = True
     startingPlayer = round(random.uniform(0.5, maxPlayer+0.49)) #Quin jugador comença (número, no index a la llista)
     currentPlayer = playerList.index(startingPlayer) #Índex del jugador que comença
@@ -202,10 +210,14 @@ def gameStart(maxPlayer, playerList):
     return currentPlayer
 
 def jugar():
+    global primeraJugada
     currentPlayer = gameStart(len(playerList), playerList)
     while (inRound):
         playerTurn(currentPlayer)#Funció de què passa durant el turn del jugador.
         currentPlayer = nextPlayerSelect(currentPlayer)
+        if (cartaElegida[1] == "skip"):
+            currentPlayer = nextPlayerSelect(currentPlayer)
+        primeraJugada = False
     print("Has ganado la ronda")
     finishRound()
 

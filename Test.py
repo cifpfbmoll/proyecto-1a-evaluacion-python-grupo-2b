@@ -84,6 +84,3 @@ def giveCardsToPlayers(Players):
     return Players
 
 playerAmount = askForPlayers()
-
-
-
